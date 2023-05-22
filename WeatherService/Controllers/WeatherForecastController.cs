@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebCommon;
 
 namespace WeatherService.Controllers
 {
@@ -33,7 +34,35 @@ namespace WeatherService.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Forecast2()
         {
-            throw new Exception("AAAA");
+            return new WeatherService().FakeForcastServiceCall();
+        }
+
+        [HttpGet]
+        public IEnumerable<WeatherForecast> Forecast3()
+        {
+            throw new CodedException("DirectThrow", "Direct error!");
+        }
+
+        // Fake service
+        public class WeatherService
+        {
+            public IEnumerable<WeatherForecast> FakeForcastServiceCall()
+            {
+                try
+                {
+                    System.IO.File.OpenText("AAAAA");  // Somewhere deep in the code
+                }
+                catch (Exception ex)
+                {
+                    if (ex is CodedException)
+                    {
+                        throw;
+                    }
+                    throw CodedException.CreateFromException("WeatherService.ForecastFail", ex, new { FileName = "AAAAA" });
+                }
+
+                return null;
+            }
         }
     }
 }

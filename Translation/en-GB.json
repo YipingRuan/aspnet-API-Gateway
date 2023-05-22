@@ -1,0 +1,4 @@
+{
+	"A.B.C": "",
+	"WeatherService.ForecastFail": "Failed to forecast weather file {{FileName}}"
+}
