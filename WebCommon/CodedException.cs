@@ -16,7 +16,7 @@ namespace WebCommon
     {
         public string TimeStamp { get; set; } = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
         public string Code { get; set; }
-        public string OriginalStackTrace { get; set; }
+        public Dictionary<string, object> InternalDetails { get; set; }
 
         public CodedException(string code, string message, object data = null)
             : base(message)
@@ -30,9 +30,9 @@ namespace WebCommon
 
         public CodedError ToCodedError(string correlationId)
         {
-            if (OriginalStackTrace == null)
+            if (InternalDetails == null)
             {
-                OriginalStackTrace = StackTrace;  // Only available after throw
+                InternalDetails = ExtractInternalDetails(this);  // Only available after throw
             }
 
             var response = new CodedError
@@ -42,7 +42,7 @@ namespace WebCommon
                 Code = Code,
                 Data = ConverToDictionary(Data),
                 Message = Message,
-                OriginalStackTrace = OriginalStackTrace
+                InternalDetails = InternalDetails,
             };
 
             return response;
@@ -61,30 +61,44 @@ namespace WebCommon
             return d;
         }
 
-        public static CodedException CreateFromCodedError(CodedError error)
+        public static CodedException FromCodedError(CodedError error)
         {
             var ex = new CodedException(error.Code, error.Message, error.Data)
             {
                 TimeStamp = error.TimeStamp,
-                OriginalStackTrace = error.OriginalStackTrace,
+                InternalDetails = error.InternalDetails,
             };
 
             return ex;
         }
 
-        public static CodedException CreateFromException(string code, Exception e, object data = null)
+        public static CodedException FromException(string code, Exception ex, object data = null, bool reuseCodedException = true)
         {
-            var ex = new CodedException(code, e.Message, e.Data)
+            if (ex is CodedException)
             {
-                OriginalStackTrace = e.StackTrace,
-            };
+                return ex as CodedException;
+            }
+
+            var e = new CodedException(code, ex.Message, ex.Data);
+            e.InternalDetails = ExtractInternalDetails(ex);
 
             foreach (var p in ConverToDictionary(data))
             {
-                ex.Data.Add(p.Key, p.Value);
+                e.Data.Add(p.Key, p.Value);
             }
 
-            return ex;
+            return e;
+        }
+
+        static Dictionary<string, object> ExtractInternalDetails(Exception ex)
+        {
+            var details = new
+            {
+                Module = ex.TargetSite.Module.FullyQualifiedName,
+                Summary = ex.ToString().Split("\n", StringSplitOptions.TrimEntries),
+            };
+
+            return ConverToDictionary(details);
         }
     }
 
@@ -98,7 +112,7 @@ namespace WebCommon
         public string Code { get; set; }
         public Dictionary<string, object> Data { get; set; }
         public string Message { get; set; }
-        public string OriginalStackTrace { get; set; }
+        public Dictionary<string, object> InternalDetails { get; set; }
     }
 
     public record CodedErrorClientResponse

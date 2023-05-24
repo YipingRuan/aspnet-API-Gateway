@@ -54,11 +54,7 @@ namespace WeatherService.Controllers
                 }
                 catch (Exception ex)
                 {
-                    if (ex is CodedException)
-                    {
-                        throw;
-                    }
-                    throw CodedException.CreateFromException("WeatherService.ForecastFail", ex, new { FileName = "AAAAA" });
+                    throw CodedException.FromException("WeatherService.ForecastFail", ex, new { FileName = "AAAAA" });
                 }
 
                 return null;
