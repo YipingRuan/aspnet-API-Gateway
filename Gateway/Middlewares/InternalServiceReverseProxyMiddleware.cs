@@ -1,8 +1,10 @@
-﻿using System.Net;
-using System.Text;
+﻿using Common.ErrorHandling;
+using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebCommon;
+using WebCommon.CodedErrorHelper;
+using WebCommon.Translation;
 
 namespace Gateway.Middlewares
 {
@@ -12,12 +14,14 @@ namespace Gateway.Middlewares
     // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
     public class InternalServiceReverseProxyMiddleware
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new();
         private readonly RequestDelegate _nextMiddleware;
+        private readonly IConfiguration _config;
 
-        public InternalServiceReverseProxyMiddleware(RequestDelegate nextMiddleware)
+        public InternalServiceReverseProxyMiddleware(RequestDelegate nextMiddleware, IConfiguration config)
         {
             _nextMiddleware = nextMiddleware;
+            _config = config;
         }
 
         public async Task Invoke(HttpContext context)
@@ -33,8 +37,8 @@ namespace Gateway.Middlewares
             var targetRequestMessage = CreateTargetMessage(context, targetUri);
 
             // API Call
-            using var responseMessage = await _httpClient.SendAsync(targetRequestMessage, 
-                HttpCompletionOption.ResponseHeadersRead, 
+            using var responseMessage = await _httpClient.SendAsync(targetRequestMessage,
+                HttpCompletionOption.ResponseHeadersRead,
                 context.RequestAborted);
 
             context.Response.StatusCode = (int)responseMessage.StatusCode;
@@ -45,30 +49,27 @@ namespace Gateway.Middlewares
 
         private async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage)
         {
-            var response = context.Response;
-
-            // HTTP 200, just copy the response
-            if (responseMessage.IsSuccessStatusCode)
+            // Is a CodedError response? (Must be 500)
+            if (responseMessage.StatusCode == HttpStatusCode.InternalServerError)
             {
-                await responseMessage.Content.CopyToAsync(response.Body);
-                return;
-            }
-
-            // Is a coded exception response?
-            var content = await responseMessage.Content.ReadAsByteArrayAsync();
-            if (content.Length > 0)
-            {
-                var ex = JsonSerializer.Deserialize<CodedError>(content);
-                if (ex != null && !string.IsNullOrEmpty(ex.Code))
+                var content = await responseMessage.Content.ReadAsByteArrayAsync();
+                if (content.Length > 0)
                 {
-                    var clientResponse = ConvertToCodedErrorClientResponse(ex);
-                    await response.WriteAsJsonAsync(clientResponse);
-                    return;
+                    var error = JsonSerializer.Deserialize<CodedError>(content);
+                    if (!string.IsNullOrEmpty(error.Code))
+                    {
+                        bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
+                        var clientResponse = error.ToClientErrorResponse(keepInternalDetails);
+                        clientResponse.ClientMessage = new TranslationService("en-GB").Translate(error.Code, error.Data);
+
+                        await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
+                        return;
+                    }
                 }
             }
 
-            // Else
-            await responseMessage.Content.CopyToAsync(response.Body);
+            // 200, 500 but not CodedError, other
+            await responseMessage.Content.CopyToAsync(context.Response.Body);
         }
 
         private bool IsContentOfType(HttpResponseMessage responseMessage, string type)
@@ -153,27 +154,7 @@ namespace Gateway.Middlewares
             return new Uri($"{targetService}/{match.Groups["RemainingPath"].Value}{request.QueryString.Value}");
         }
 
-        private CodedErrorClientResponse ConvertToCodedErrorClientResponse(CodedError ex)
-        {
-            // Translate
-            string template = @"Failed to forecast weather file {{FileName}}";  // Get from translation resouces
-
-            StringBuilder translated = new StringBuilder(template);
-            foreach (var item in ex.Data)
-            {
-                translated.Replace("{{" + item.Key + "}}", item.Value + "");
-            }
-
-            var result = new CodedErrorClientResponse
-            {
-                CorrelationId = ex.CorrelationId,
-                TimeStamp = ex.TimeStamp,
-                Code = ex.Code,
-                ClientMessage = translated.ToString(),
-            };
-
-            return result;
-        }
+        static JsonSerializerOptions DefaultJsonSerializerOptions = new() { PropertyNamingPolicy = null };
 
         static Regex RequestPathPattern = new(@"/(?<ServiceName>.+?)/(?<RemainingPath>.+)", RegexOptions.Compiled);
 

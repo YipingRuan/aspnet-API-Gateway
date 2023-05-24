@@ -1,3 +1,4 @@
+using Common.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
 using WebCommon;
 
@@ -40,7 +41,7 @@ namespace WeatherService.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Forecast3()
         {
-            throw new CodedException("DirectThrow", "Direct error!");
+            throw new Exception("XXXXXXXXXXXXXXXXxxxxx");
         }
 
         // Fake service
@@ -54,7 +55,7 @@ namespace WeatherService.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw CodedException.FromException("WeatherService.ForecastFail", ex, new { FileName = "AAAAA" });
+                    throw ex.Bag("WeatherService.ForecastFail", new { FileName = "AAAAA" });
                 }
 
                 return null;
