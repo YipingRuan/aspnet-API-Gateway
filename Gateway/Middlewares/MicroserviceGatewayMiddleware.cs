@@ -8,7 +8,6 @@ using WebCommon.Translation;
 namespace Gateway.Middlewares
 {
     // 1. Forward request to microservices
-    // 1.1 Convert JWT/API-key to request context in header
     // 2. Translate CodedError to CodedErrorClientResponse
     // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
     public class MicroserviceGatewayMiddleware
