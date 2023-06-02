@@ -10,7 +10,7 @@ namespace WebCommon.CodedErrorHelper
         public string CorrelationId { get; set; }
         public string TimeStamp { get; set; }
         public string Code { get; set; }
-        public string ClientMessage { get; set; }  // Translated!
+        public string Message { get; set; }  // Translated!
         public Dictionary<string, object> InternalDetails { get; set; }  // Exposed during debugging
     }
 

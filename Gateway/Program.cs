@@ -13,6 +13,6 @@ var app = builder.Build();
 //app.UseAuthorization();
 
 //app.MapControllers();
-app.UseMiddleware<InternalServiceReverseProxyMiddleware>();
+app.UseMiddleware<MicroserviceGatewayMiddleware>();
 
 app.Run();

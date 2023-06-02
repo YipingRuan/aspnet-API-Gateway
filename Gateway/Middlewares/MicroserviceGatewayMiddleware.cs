@@ -2,7 +2,6 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using WebCommon;
 using WebCommon.CodedErrorHelper;
 using WebCommon.Translation;
 
@@ -12,13 +11,13 @@ namespace Gateway.Middlewares
     // 1.1 Convert JWT/API-key to request context in header
     // 2. Translate CodedError to CodedErrorClientResponse
     // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
-    public class InternalServiceReverseProxyMiddleware
+    public class MicroserviceGatewayMiddleware
     {
         private static readonly HttpClient _httpClient = new();
         private readonly RequestDelegate _nextMiddleware;
         private readonly IConfiguration _config;
 
-        public InternalServiceReverseProxyMiddleware(RequestDelegate nextMiddleware, IConfiguration config)
+        public MicroserviceGatewayMiddleware(RequestDelegate nextMiddleware, IConfiguration config)
         {
             _nextMiddleware = nextMiddleware;
             _config = config;
@@ -58,10 +57,7 @@ namespace Gateway.Middlewares
                     var error = JsonSerializer.Deserialize<CodedError>(content);
                     if (!string.IsNullOrEmpty(error.Code))
                     {
-                        bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
-                        var clientResponse = error.ToClientErrorResponse(keepInternalDetails);
-                        clientResponse.ClientMessage = new TranslationService("en-GB").Translate(error.Code, error.Data);
-
+                        ClientErrorResponse clientResponse = ProcessCodedError(error, "en-GB");
                         await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
                         return;
                     }
@@ -70,6 +66,15 @@ namespace Gateway.Middlewares
 
             // 200, 500 but not CodedError, other
             await responseMessage.Content.CopyToAsync(context.Response.Body);
+        }
+
+        private ClientErrorResponse ProcessCodedError(CodedError error, string languageCode)
+        {
+            bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
+            var clientResponse = error.ToClientErrorResponse(keepInternalDetails);
+            clientResponse.Message = new TranslationService(languageCode).Translate(error.Code, error.Data);
+            
+            return clientResponse;
         }
 
         private bool IsContentOfType(HttpResponseMessage responseMessage, string type)
