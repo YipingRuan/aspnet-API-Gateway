@@ -30,7 +30,7 @@ namespace WebCommon.CodedErrorHelper
                 // Write CodedError
                 var correlationId = Guid.NewGuid().ToString();  // Get from context
                 var serviceResponse = ex
-                    .Bag("General.ServiceError", new { ServiceName = "SeatherService" })
+                    .Bag("General.ServiceError", new { ServiceName = context.Request.Path.Value })
                     .ToCodedError(correlationId);
 
                 var utf8 = JsonSerializer.SerializeToUtf8Bytes(serviceResponse);

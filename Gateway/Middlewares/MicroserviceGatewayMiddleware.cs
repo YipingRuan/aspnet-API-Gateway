@@ -24,6 +24,22 @@ namespace Gateway.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
+            try
+            {
+                await ForwardRequest(context);
+            }
+            catch (Exception ex)  // Error during _httpClient call
+            {
+                var codedError = ex.Bag("ForwardRequest.Error").ToCodedError(null);
+                var clientResponse = ProcessCodedError(codedError,"en-GB");
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
+            }
+        }
+
+        public async Task ForwardRequest(HttpContext context)
+        {
             var targetUri = BuildTargetUri(context.Request);
 
             if (targetUri == null || targetUri.Segments.Length == 1)
@@ -72,7 +88,7 @@ namespace Gateway.Middlewares
             bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
             var clientResponse = error.ToClientErrorResponse(keepInternalDetails);
             clientResponse.Message = new TranslationService(languageCode).Translate(error.Code, error.Data);
-            
+
             return clientResponse;
         }
 
