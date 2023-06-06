@@ -34,13 +34,15 @@ namespace Common.ErrorHandling
         /// <returns></returns>
         public static CodedException Bag(this Exception ex, string code, object data = null, bool reuseCurrentCodedException = true)
         {
-            if (ex is CodedException && reuseCurrentCodedException)
+            if (reuseCurrentCodedException && ex is CodedException)
             {
                 return ex as CodedException;
             }
 
-            var e = new CodedException(code, ex.Message, ex.Data);
-            e.InternalDetails = Helper.ExtractInternalDetails(ex);
+            var e = new CodedException(code, ex.Message, ex.Data)
+            {
+                InternalDetails = Helper.ExtractInternalDetails(ex)
+            };
 
             foreach (var p in Helper.ConverToDictionary(data))
             {

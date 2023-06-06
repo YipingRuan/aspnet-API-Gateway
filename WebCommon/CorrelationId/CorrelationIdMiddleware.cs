@@ -27,6 +27,7 @@ namespace WebCommon.CorrelationId
 
             Id.Value = correlationId;
             context.Response.Headers.Add(IdHeader, correlationId);
+
             foreach (var a in OnCorrelationReadyActions)
             {
                 a(correlationId);
