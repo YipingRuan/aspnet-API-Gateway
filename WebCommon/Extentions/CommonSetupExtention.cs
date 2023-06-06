@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using WebCommon.CodedErrorHelper;
+using WebCommon.CorrelationId;
 
 namespace WebCommon.Extentions
 {
@@ -19,6 +20,7 @@ namespace WebCommon.Extentions
         public static void CommonSetup(this WebApplication app)
         {
             app.MapControllers();
+            app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<CodedErrorMiddleware>();
             app.MapHealthChecks("/health");
         }

@@ -21,6 +21,11 @@ namespace Common.ErrorHandling
             }
         }
 
+        /// <summary>
+        /// Only used in CodedErrorMiddleware when sending error cross HTTP
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
         public CodedError ToCodedError(string correlationId)
         {
             if (InternalDetails == null)

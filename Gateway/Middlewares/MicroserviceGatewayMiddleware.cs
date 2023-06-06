@@ -7,9 +7,9 @@ using WebCommon.Translation;
 
 namespace Gateway.Middlewares
 {
+    // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
     // 1. Forward request to microservices
     // 2. Translate CodedError to CodedErrorClientResponse
-    // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
     public class MicroserviceGatewayMiddleware
     {
         private static readonly HttpClient _httpClient = new();

@@ -19,7 +19,7 @@
         public void ProcessAuthentication(HttpContext context)
         {
             // Get API key and fill user information
-            string v = context.Request.Headers["test"].FirstOrDefault() + "";
+            string v = context.Request.Headers["test"].ToString();
             context.Request.Headers.Add("test_added", v + " added");
         }
     }

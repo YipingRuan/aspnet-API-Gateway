@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
+using WebCommon.CorrelationId;
 
 namespace WebCommon.CodedErrorHelper
 {
@@ -28,10 +29,9 @@ namespace WebCommon.CodedErrorHelper
                 response.ContentType = MediaTypeNames.Application.Json;
 
                 // Write CodedError
-                var correlationId = Guid.NewGuid().ToString();  // Get from context
                 var serviceResponse = ex
                     .Bag("General.ServiceError", new { ServiceName = context.Request.Path.Value })
-                    .ToCodedError(correlationId);
+                    .ToCodedError(CorrelationIdMiddleware.Id.Value);
 
                 var utf8 = JsonSerializer.SerializeToUtf8Bytes(serviceResponse);
                 await response.Body.WriteAsync(utf8);
