@@ -20,31 +20,6 @@ namespace Common.ErrorHandling
                 Data.Add(p.Key, p.Value);
             }
         }
-
-        /// <summary>
-        /// Only used in CodedErrorMiddleware when sending error cross HTTP
-        /// </summary>
-        /// <param name="correlationId"></param>
-        /// <returns></returns>
-        public CodedError ToCodedError(string correlationId)
-        {
-            if (InternalDetails == null)
-            {
-                InternalDetails = Helper.ExtractInternalDetails(this);  // Only available after throw
-            }
-
-            var response = new CodedError
-            {
-                CorrelationId = correlationId, // Get from HTTP context
-                TimeStamp = TimeStamp,
-                Code = Code,
-                Data = Helper.ConverToDictionary(Data),
-                Message = Message,
-                InternalDetails = InternalDetails,
-            };
-
-            return response;
-        }
     }
 
     public static class ExceptionExtention

@@ -13,20 +13,4 @@ namespace WebCommon.CodedErrorHelper
         public string Message { get; set; }  // Translated!
         public Dictionary<string, object> InternalDetails { get; set; }  // Exposed during debugging
     }
-
-    public static class CodedErrorExtention
-    {
-        public static ClientErrorResponse ToClientErrorResponse(this CodedError error, bool keepInternalDetails = false)
-        {
-            var result = new ClientErrorResponse
-            {
-                CorrelationId = error.CorrelationId,
-                TimeStamp = error.TimeStamp,
-                Code = error.Code,
-                InternalDetails = keepInternalDetails ? error.InternalDetails : null,
-            };
-
-            return result;
-        }
-    }
 }

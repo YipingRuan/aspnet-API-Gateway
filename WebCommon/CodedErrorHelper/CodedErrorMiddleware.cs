@@ -1,9 +1,9 @@
-﻿using Common.ErrorHandling;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
 using WebCommon.CorrelationId;
+using Common.ErrorHandling;
 
 namespace WebCommon.CodedErrorHelper
 {
