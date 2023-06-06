@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.AzureAnalytics" Version="4.8.0" />
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 

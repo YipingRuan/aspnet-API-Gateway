@@ -41,6 +41,7 @@ namespace WeatherService.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Forecast3()
         {
+            _logger.LogError("Dead");
             throw new Exception("XXXXXXXXXXXXXXXXxxxxx");
         }
 
