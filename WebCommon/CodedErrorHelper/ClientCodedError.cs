@@ -1,6 +1,4 @@
-﻿using Common.ErrorHandling;
-
-namespace WebCommon.CodedErrorHelper
+﻿namespace WebCommon.CodedErrorHelper
 {
     /// <summary>
     /// Return to client by Gateway

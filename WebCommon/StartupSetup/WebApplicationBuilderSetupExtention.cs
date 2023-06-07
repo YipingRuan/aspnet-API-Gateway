@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog.Context;
+using WebCommon.CorrelationId;
 
 namespace WebCommon.StartupSetup
 {
@@ -12,6 +14,8 @@ namespace WebCommon.StartupSetup
         {
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
+
+            CorrelationIdMiddleware.OnIdReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
         }
     }
 }

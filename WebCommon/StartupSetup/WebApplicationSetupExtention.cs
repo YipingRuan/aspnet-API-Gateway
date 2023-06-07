@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Common.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WebCommon.CodedErrorHelper;
 using WebCommon.CorrelationId;
 
@@ -15,6 +18,9 @@ namespace WebCommon.StartupSetup
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<CodedErrorMiddleware>();
             app.MapHealthChecks("/health");
+
+            string source = $"{nameof(WebApplicationExtention)}.{nameof(CommonSetup)}";
+            LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>(), source);
         }
     }
 }

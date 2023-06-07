@@ -1,6 +1,6 @@
 using Common.ErrorHandling;
+using Common.Logging;
 using Microsoft.AspNetCore.Mvc;
-using WebCommon;
 
 namespace WeatherService.Controllers
 {
@@ -42,6 +42,7 @@ namespace WeatherService.Controllers
         public IEnumerable<WeatherForecast> Forecast3()
         {
             _logger.LogError("Dead");
+            LogUtility.LoggerFactory.CreateLogger<WeatherForecast>().LogInformation("Dead2");
             throw new Exception("XXXXXXXXXXXXXXXXxxxxx");
         }
 

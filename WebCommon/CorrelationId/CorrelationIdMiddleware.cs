@@ -5,7 +5,7 @@ namespace WebCommon.CorrelationId
     public class CorrelationIdMiddleware
     {
         public static readonly AsyncLocal<string> Id = new AsyncLocal<string>();
-        public static readonly List<Action<string>> OnCorrelationReadyActions = new();
+        public static readonly List<Action<string>> OnIdReadyActions = new();
 
         static readonly string IdHeader = "CorrelationId";
         static string GenerateId() => Guid.NewGuid().ToString("N").Substring(0, 5);
@@ -28,7 +28,7 @@ namespace WebCommon.CorrelationId
             Id.Value = correlationId;
             context.Response.Headers.Add(IdHeader, correlationId);
 
-            foreach (var a in OnCorrelationReadyActions)
+            foreach (var a in OnIdReadyActions)
             {
                 a(correlationId);
             }

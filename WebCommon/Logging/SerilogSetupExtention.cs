@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Serilog;
-using Serilog.Context;
 using Serilog.Events;
-using WebCommon.CorrelationId;
 
 namespace WebCommon.Logging
 {
@@ -29,8 +27,6 @@ namespace WebCommon.Logging
 
                 .ReadFrom.Services(services)
                 .ReadFrom.Configuration(context.Configuration));
-
-            CorrelationIdMiddleware.OnCorrelationReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
         }
     }
 }
