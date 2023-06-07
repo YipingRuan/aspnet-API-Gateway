@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
 using System.Text.Json;
 
 namespace WebCommon.Translation
@@ -24,7 +25,7 @@ namespace WebCommon.Translation
             LanguageCode = languageCode;
         }
 
-        public string Translate(string code, Dictionary<string, object> data)
+        public string Translate(string code, IDictionary data)
         {
             string template = GetTranslationTemplate(code);
             if (template == null)
@@ -33,7 +34,7 @@ namespace WebCommon.Translation
             }
 
             StringBuilder translated = new StringBuilder(template);
-            foreach (var item in data)
+            foreach (DictionaryEntry item in data)
             {
                 translated.Replace("{{" + item.Key + "}}", item.Value + "");
             }

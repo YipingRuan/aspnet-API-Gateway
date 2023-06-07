@@ -1,4 +1,6 @@
-﻿namespace WebCommon.CodedErrorHelper
+﻿using System.Collections;
+
+namespace WebCommon.CodedErrorHelper
 {
     /// <summary>
     /// Return to client by Gateway
@@ -9,6 +11,6 @@
         public string TimeStamp { get; set; }
         public string Code { get; set; }
         public string Message { get; set; }  // Translated!
-        public Dictionary<string, object> InternalDetails { get; set; }  // Exposed during debugging
+        public IDictionary InternalDetails { get; set; }  // Exposed during debugging
     }
 }

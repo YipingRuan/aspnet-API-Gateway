@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Text.Json;
 
 namespace Common.ErrorHandling
 {
@@ -9,7 +10,7 @@ namespace Common.ErrorHandling
     {
         public string TimeStamp { get; set; } = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
         public string Code { get; set; }
-        public Dictionary<string, object> InternalDetails { get; set; }
+        public IDictionary InternalDetails { get; set; }
 
         public CodedException(string code, string message, object data = null)
             : base(message)
@@ -41,7 +42,7 @@ namespace Common.ErrorHandling
 
             var e = new CodedException(code, ex.Message, ex.Data)
             {
-                InternalDetails = Helper.ExtractInternalDetails(ex)
+                InternalDetails = ex.ExtractInternalDetails()
             };
 
             foreach (var p in Helper.ConverToDictionary(data))
@@ -51,11 +52,22 @@ namespace Common.ErrorHandling
 
             return e;
         }
+
+        public static IDictionary ExtractInternalDetails(this Exception ex)
+        {
+            var details = new Dictionary<string, object>
+            {
+                ["Module"] = ex.TargetSite.Module.FullyQualifiedName,
+                ["Summary"] = ex.ToString().Split("\n", StringSplitOptions.TrimEntries),
+            };
+
+            return details;
+        }
     }
 
-    static class Helper
+    internal static class Helper
     {
-        public static Dictionary<string, object> ConverToDictionary(object obj)
+        internal static Dictionary<string, object> ConverToDictionary(object obj)
         {
             if (obj == null)
             {
@@ -66,17 +78,6 @@ namespace Common.ErrorHandling
             var d = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
             return d;
-        }
-
-        public static Dictionary<string, object> ExtractInternalDetails(Exception ex)
-        {
-            var details = new
-            {
-                Module = ex.TargetSite.Module.FullyQualifiedName,
-                Summary = ex.ToString().Split("\n", StringSplitOptions.TrimEntries),
-            };
-
-            return ConverToDictionary(details);
         }
     }
 }

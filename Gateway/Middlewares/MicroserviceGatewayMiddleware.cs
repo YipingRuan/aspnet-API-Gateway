@@ -92,17 +92,17 @@ namespace Gateway.Middlewares
             return clientResponse;
         }
 
-        private bool IsContentOfType(HttpResponseMessage responseMessage, string type)
-        {
-            var result = false;
+        //private bool IsContentOfType(HttpResponseMessage responseMessage, string type)
+        //{
+        //    var result = false;
 
-            if (responseMessage.Content?.Headers?.ContentType != null)
-            {
-                result = responseMessage.Content.Headers.ContentType.MediaType == type;
-            }
+        //    if (responseMessage.Content?.Headers?.ContentType != null)
+        //    {
+        //        result = responseMessage.Content.Headers.ContentType.MediaType == type;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         private HttpRequestMessage CreateTargetMessage(HttpContext context, Uri targetUri)
         {
