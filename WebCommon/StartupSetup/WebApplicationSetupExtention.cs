@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebCommon.CodedErrorHelper;
 using WebCommon.CorrelationId;
+using WebCommon.ErrorHandling;
 
 namespace WebCommon.StartupSetup
 {

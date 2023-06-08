@@ -1,9 +1,8 @@
 ﻿using Common.ErrorHandling;
+using Gateway.ClientErrorHandling;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using WebCommon.CodedErrorHelper;
-using WebCommon.Translation;
 
 namespace Gateway.Middlewares
 {
@@ -30,7 +29,12 @@ namespace Gateway.Middlewares
             }
             catch (Exception ex)  // Error during _httpClient call
             {
-                var codedError = ex.Bag("ForwardRequest.Error").ToCodedError(null);
+                var details = new
+                {
+                    Path = context.Request.Path.Value,
+                };
+
+                var codedError = ex.Bag("Gateway.ForwardRequest.Error", details).ToCodedError(null);
                 var clientResponse = ProcessCodedError(codedError,"en-GB");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
@@ -86,8 +90,7 @@ namespace Gateway.Middlewares
         private ClientErrorResponse ProcessCodedError(CodedError error, string languageCode)
         {
             bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
-            var clientResponse = error.ToClientErrorResponse(keepInternalDetails);
-            clientResponse.Message = new TranslationService(languageCode).Translate(error.Code, error.Data);
+            var clientResponse = error.ToClientErrorResponse(languageCode, keepInternalDetails);
 
             return clientResponse;
         }

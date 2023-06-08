@@ -5,7 +5,7 @@ using System.Text.Json;
 using WebCommon.CorrelationId;
 using Common.ErrorHandling;
 
-namespace WebCommon.CodedErrorHelper
+namespace WebCommon.ErrorHandling
 {
     public class CodedErrorMiddleware
     {

@@ -1,8 +1,6 @@
-﻿using Common.ErrorHandling;
-using System.Collections;
-using System.Text.Json;
+﻿using System.Collections;
 
-namespace WebCommon.CodedErrorHelper
+namespace Common.ErrorHandling
 {
     /// <summary>
     /// Pass between service, preserve intenral details
@@ -16,24 +14,6 @@ namespace WebCommon.CodedErrorHelper
         public IDictionary Data { get; set; }
         public string Message { get; set; }
         public IDictionary InternalDetails { get; set; }
-
-        /// <summary>
-        /// Optionally keep InternalDetails, message need to be translated.
-        /// </summary>
-        /// <param name="keepInternalDetails"></param>
-        /// <returns></returns>
-        public ClientErrorResponse ToClientErrorResponse(bool keepInternalDetails = false)
-        {
-            var result = new ClientErrorResponse
-            {
-                CorrelationId = CorrelationId,
-                TimeStamp = TimeStamp,
-                Code = Code,
-                InternalDetails = keepInternalDetails ? InternalDetails : null,
-            };
-
-            return result;
-        }
 
         /// <summary>
         /// Recover an exception to be thrown, during HttpClient call in services

@@ -2,14 +2,14 @@
 using System.Text;
 using System.Text.Json;
 
-namespace WebCommon.Translation
+namespace Gateway.ClientErrorHandling
 {
     public class TranslationService
     {
         /// <summary>
         /// Load from json files, use FrozenDictionary<TKey,TValue> in .net 8
         /// </summary>
-        static Dictionary<string, Dictionary<string, string>> Translations = new()
+        static Dictionary<string, Dictionary<string, string>> TranslationTemplates = new()
         {
             ["en-GB"] = new()
             {
@@ -17,6 +17,16 @@ namespace WebCommon.Translation
                 ["General.ServiceError"] = "Internal service error: {{ServiceName}}"
             }
         };
+
+        /// <summary>
+        /// Load from json file?
+        /// </summary>
+        /// <param name="languageCode"></param>
+        /// <param name="templates"></param>
+        public static void ReplaceTranslationTemplates(string languageCode, Dictionary<string, string> templates)
+        {
+            TranslationTemplates[languageCode] = templates;
+        }
 
         public string LanguageCode { get; private set; }
 
@@ -30,7 +40,8 @@ namespace WebCommon.Translation
             string template = GetTranslationTemplate(code);
             if (template == null)
             {
-                return $"Tranlsation is not available for [{LanguageCode}][{code}]. Raw data: {JsonSerializer.Serialize(data)}";
+                string json = JsonSerializer.Serialize(data);
+                return $"Tranlsation is not available for [{LanguageCode}][{code}]. Raw data: {json}";
             }
 
             StringBuilder translated = new StringBuilder(template);
@@ -44,7 +55,7 @@ namespace WebCommon.Translation
 
         string GetTranslationTemplate(string code)
         {
-            return Translations
+            return TranslationTemplates
                 .GetValueOrDefault(LanguageCode, null)?
                 .GetValueOrDefault(code, null);
         }
