@@ -13,6 +13,7 @@
         public async Task Invoke(HttpContext context)
         {
             ProcessAuthentication(context);
+            
             await _next.Invoke(context);
         }
 
@@ -21,6 +22,15 @@
             // Get API key and fill user information
             string v = context.Request.Headers["test"].ToString();
             context.Request.Headers.Add("test_added", v + " added");
+
+            if (context.Request.Headers["language"] + "" == "")
+            {
+                context.Request.Headers["language"] = "en-GB";
+            }
+            else
+            { 
+                // Use user's language setting
+            }
         }
     }
 }

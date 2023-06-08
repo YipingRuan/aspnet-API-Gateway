@@ -40,8 +40,7 @@ namespace Gateway.ClientErrorHandling
             string template = GetTranslationTemplate(code);
             if (template == null)
             {
-                string json = JsonSerializer.Serialize(data);
-                return $"Tranlsation is not available for [{LanguageCode}][{code}]. Raw data: {json}";
+                return $"Tranlsation is not available for [{LanguageCode}:{code}].";
             }
 
             StringBuilder translated = new StringBuilder(template);

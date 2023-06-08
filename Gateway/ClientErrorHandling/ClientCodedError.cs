@@ -8,10 +8,10 @@ namespace Gateway.ClientErrorHandling
     public class ClientErrorResponse
     {
         public string Message { get; set; }  // Translated!
-        public string CorrelationId { get; set; }
-        public string TimeStamp { get; set; }
         public string Code { get; set; }
         public IDictionary Data { get; set; }
+        public string CorrelationId { get; set; }
+        public string TimeStamp { get; set; }
         public IDictionary InternalDetails { get; set; }  // Exposed during debugging
     }
 }

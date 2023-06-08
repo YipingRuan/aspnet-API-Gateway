@@ -51,13 +51,14 @@ namespace WeatherService.Controllers
         {
             public IEnumerable<WeatherForecast> FakeForcastServiceCall()
             {
+                string fileName = "NoSuchFile.txt";
                 try
                 {
-                    System.IO.File.OpenText("AAAAA");  // Somewhere deep in the code
+                    System.IO.File.OpenText(fileName);  // Somewhere deep in the code
                 }
                 catch (Exception ex)
                 {
-                    throw ex.Bag("WeatherService.ForecastFail", new { FileName = "AAAAA" });
+                    throw ex.Bag("WeatherService.ForecastFail", new { FileName = fileName });
                 }
 
                 return null;

@@ -27,7 +27,7 @@ namespace Gateway.Middlewares
             {
                 await ForwardRequest(context);
             }
-            catch (Exception ex)  // Error during _httpClient call
+            catch (Exception ex)  // Not able to reach the microservice
             {
                 var details = new
                 {
@@ -35,7 +35,7 @@ namespace Gateway.Middlewares
                 };
 
                 var codedError = ex.Bag("Gateway.ForwardRequest.Error", details).ToCodedError(null);
-                var clientResponse = ProcessCodedError(codedError,"en-GB");
+                var clientResponse = ProcessCodedError(codedError, context.Request.Headers["language"] + "");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
@@ -59,6 +59,7 @@ namespace Gateway.Middlewares
                 HttpCompletionOption.ResponseHeadersRead,
                 context.RequestAborted);
 
+            // Able to reach the microservice and response
             context.Response.StatusCode = (int)responseMessage.StatusCode;
             CopyFromTargetResponseHeaders(context, responseMessage);
 
@@ -76,7 +77,7 @@ namespace Gateway.Middlewares
                     var error = JsonSerializer.Deserialize<CodedError>(content);
                     if (!string.IsNullOrEmpty(error.Code))
                     {
-                        ClientErrorResponse clientResponse = ProcessCodedError(error, "en-GB");
+                        ClientErrorResponse clientResponse = ProcessCodedError(error, context.Request.Headers["language"] + "");
                         await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
                         return;
                     }
