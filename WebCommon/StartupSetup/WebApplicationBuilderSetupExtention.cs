@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Context;
 using WebCommon.CorrelationId;
@@ -13,9 +14,19 @@ namespace WebCommon.StartupSetup
     {
         public static WebApplicationBuilder CommonSetup(this WebApplicationBuilder builder)
         {
+            // Load config
+            string[] jsons = { "shared-settings", "shared-settings.local", "appsettings.local" };
+            foreach (var item in jsons)
+            {
+                builder.Configuration.AddJsonFile($"{item}.json", optional: true);
+            }
+            builder.Configuration.AddEnvironmentVariables();
+
+            // Regular asp.net
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
 
+            // Setup Serilog
             builder.SetupSerilog("WeatherService");
             CorrelationIdMiddleware.OnIdReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
 
