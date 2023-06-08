@@ -90,8 +90,8 @@ namespace Gateway.Middlewares
 
         private ClientErrorResponse ProcessCodedError(CodedError error, string languageCode)
         {
-            bool keepInternalDetails = _config.GetValue("ErrorHandling:ClientErrorResponseCarriesInternalDetails", false);
-            var clientResponse = error.ToClientErrorResponse(languageCode, keepInternalDetails);
+            bool showInternalDetails = _config.GetValue("ErrorHandling:ShowInternalDetailsInClientResponse", false);
+            var clientResponse = error.ToClientErrorResponse(languageCode, showInternalDetails);
 
             return clientResponse;
         }

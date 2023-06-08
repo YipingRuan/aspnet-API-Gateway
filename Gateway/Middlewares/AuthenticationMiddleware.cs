@@ -19,13 +19,15 @@
 
         public void ProcessAuthentication(HttpContext context)
         {
-            // Get API key and fill user information
-            string v = context.Request.Headers["test"].ToString();
-            context.Request.Headers.Add("test_added", v + " added");
+            var headers = context.Request.Headers;
 
-            if (context.Request.Headers["language"] + "" == "")
+            // Get API key and fill user information
+            string v = headers["test"].ToString();
+            headers.Add("test_added", v + " added");
+
+            if (headers["language"].Count == 0)
             {
-                context.Request.Headers["language"] = "en-GB";
+                headers["language"] = "en-GB";
             }
             else
             { 

@@ -7,9 +7,9 @@ namespace Gateway.ClientErrorHandling
         /// <summary>
         /// Optionally keep InternalDetails, message need to be translated.
         /// </summary>
-        /// <param name="keepInternalDetails"></param>
+        /// <param name="showInternalDetails"></param>
         /// <returns></returns>
-        public static ClientErrorResponse ToClientErrorResponse(this CodedError ex, string languageCode, bool keepInternalDetails = false)
+        public static ClientErrorResponse ToClientErrorResponse(this CodedError ex, string languageCode, bool showInternalDetails = false)
         {
             string translated = new TranslationService(languageCode).Translate(ex.Code, ex.Data);
 
@@ -19,7 +19,7 @@ namespace Gateway.ClientErrorHandling
                 TimeStamp = ex.TimeStamp,
                 Code = ex.Code,
                 Data = ex.Data,
-                InternalDetails = keepInternalDetails ? ex.InternalDetails : null,
+                InternalDetails = showInternalDetails ? ex.InternalDetails : null,
                 Message = translated
             };
 
