@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Context;
 using WebCommon.CorrelationId;
+using WebCommon.Logging;
 
 namespace WebCommon.StartupSetup
 {
@@ -10,12 +11,15 @@ namespace WebCommon.StartupSetup
     /// </summary>
     public static class WebApplicationBuilderSetupExtention
     {
-        public static void CommonSetup(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder CommonSetup(this WebApplicationBuilder builder)
         {
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
 
+            builder.SetupSerilog("WeatherService");
             CorrelationIdMiddleware.OnIdReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
+
+            return builder;
         }
     }
 }

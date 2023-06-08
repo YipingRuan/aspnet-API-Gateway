@@ -12,15 +12,16 @@ namespace WebCommon.StartupSetup
     /// </summary>
     public static class WebApplicationExtention
     {
-        public static void CommonSetup(this WebApplication app)
+        public static WebApplication CommonSetup(this WebApplication app)
         {
             app.MapControllers();
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<CodedErrorMiddleware>();
             app.MapHealthChecks("/health");
 
-            string source = $"{nameof(WebApplicationExtention)}.{nameof(CommonSetup)}";
-            LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>(), source);
+            LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>());
+
+            return app;
         }
     }
 }

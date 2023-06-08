@@ -10,15 +10,6 @@ namespace Common.Logging
         /// </summary>
         public static ILoggerFactory LoggerFactory { get; private set; } = new NullLoggerFactory();
 
-        /// <summary>
-        /// In asp.net startup, LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>(), source);
-        /// </summary>
-        /// <param name="newFactory"></param>
-        /// <param name="remarks"></param>
-        public static void SetLoggerFactory(ILoggerFactory newFactory, string source = "")
-        {
-            newFactory.CreateLogger(nameof(LogUtility)).LogInformation("Set LoggerFactory from {Remarks}", source);
-            LoggerFactory = newFactory;
-        }
+        public static readonly Action<ILoggerFactory> SetLoggerFactory = f => LoggerFactory = f;
     }
 }
