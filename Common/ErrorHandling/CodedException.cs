@@ -12,14 +12,34 @@ namespace Common.ErrorHandling
         public string Code { get; set; }
         public IDictionary InternalDetails { get; set; }
 
-        public CodedException(string code, string message, object data = null)
+        public CodedException(string code, string message, object data = null, IDictionary internalDetails = null)
             : base(message)
         {
             Code = code;
-            foreach (var p in Helper.ConverToDictionary(data))
+            InternalDetails = internalDetails;
+            Data.UpdateFrom(Helper.ConverToDictionary(data));
+        }
+
+        /// <summary>
+        /// Only used in CodedErrorMiddleware when sending error cross HTTP
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public CodedError ToCodedError(string correlationId)
+        {
+            var internalDetails = InternalDetails ?? this.ExtractInternalDetails();  // Only available after throw
+
+            var response = new CodedError
             {
-                Data.Add(p.Key, p.Value);
-            }
+                CorrelationId = correlationId, // Get from HTTP context
+                TimeStamp = TimeStamp,
+                Code = Code,
+                Data = Data,
+                Message = Message,
+                InternalDetails = internalDetails,
+            };
+
+            return response;
         }
     }
 
@@ -40,15 +60,7 @@ namespace Common.ErrorHandling
                 return ex as CodedException;
             }
 
-            var e = new CodedException(code, ex.Message, ex.Data)
-            {
-                InternalDetails = ex.ExtractInternalDetails()
-            };
-
-            foreach (var p in Helper.ConverToDictionary(data))
-            {
-                e.Data.Add(p.Key, p.Value);
-            }
+            var e = new CodedException(code, ex.Message, data, ex.ExtractInternalDetails());
 
             return e;
         }
@@ -58,7 +70,7 @@ namespace Common.ErrorHandling
             var details = new Dictionary<string, object>
             {
                 ["Module"] = ex.TargetSite.Module.FullyQualifiedName,
-                ["Summary"] = ex.ToString().Split("\n", StringSplitOptions.TrimEntries),
+                ["Summary"] = ex.ToString().Split("\n", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries),
             };
 
             return details;
@@ -78,6 +90,14 @@ namespace Common.ErrorHandling
             var d = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
             return d;
+        }
+
+        internal static void UpdateFrom(this IDictionary source, IDictionary extra)
+        {
+            foreach (DictionaryEntry p in extra)
+            {
+                source[p.Key] = p.Value;
+            }
         }
     }
 }

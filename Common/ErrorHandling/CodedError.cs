@@ -21,38 +21,12 @@ namespace Common.ErrorHandling
         /// <returns></returns>
         public CodedException ToException()
         {
-            var ex = new CodedException(Code, Message, Data)
+            var ex = new CodedException(Code, Message, Data, InternalDetails)
             {
                 TimeStamp = TimeStamp,
-                InternalDetails = InternalDetails,
             };
 
             return ex;
-        }
-    }
-
-    public static class CodedExceptionExtention
-    {
-        /// <summary>
-        /// Only used in CodedErrorMiddleware when sending error cross HTTP
-        /// </summary>
-        /// <param name="correlationId"></param>
-        /// <returns></returns>
-        public static CodedError ToCodedError(this CodedException ex, string correlationId)
-        {
-            ex.InternalDetails ??= ex.ExtractInternalDetails();  // Only available after throw
-
-            var response = new CodedError
-            {
-                CorrelationId = correlationId, // Get from HTTP context
-                TimeStamp = ex.TimeStamp,
-                Code = ex.Code,
-                Data = ex.Data,
-                Message = ex.Message,
-                InternalDetails = ex.InternalDetails,
-            };
-
-            return response;
         }
     }
 }

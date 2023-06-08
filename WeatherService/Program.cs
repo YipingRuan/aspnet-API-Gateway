@@ -1,3 +1,1 @@
-using WebCommon.StartupSetup;
-
-CommonWebApplicationStartup.Start(args);
+WebCommon.StartupSetup.CommonWebApplicationStartup.Start(args);
