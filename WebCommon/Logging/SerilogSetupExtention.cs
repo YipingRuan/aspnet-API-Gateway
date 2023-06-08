@@ -16,7 +16,9 @@ namespace WebCommon.Logging
         public static void SetupSerilog(this WebApplicationBuilder builder, string serviceName)
         {
             builder.Host.UseSerilog((context, services, configuration) => configuration
+                // All other information not wanted
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                // Show start up information like Now listening on: "http://localhost:5055"
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
 
                 .Enrich.FromLogContext()
