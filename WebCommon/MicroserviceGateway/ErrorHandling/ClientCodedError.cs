@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace WebCommon.ClientErrorHandling
+namespace WebCommon.MicroserviceGateway.ErrorHandling
 {
     /// <summary>
     /// Return to client by Gateway

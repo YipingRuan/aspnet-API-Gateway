@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
 
-namespace WebCommon.ClientErrorHandling
+namespace WebCommon.MicroserviceGateway.ErrorHandling
 {
     public class TranslationService
     {

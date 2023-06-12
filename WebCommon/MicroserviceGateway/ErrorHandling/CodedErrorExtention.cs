@@ -1,6 +1,6 @@
 ﻿using Common.ErrorHandling;
 
-namespace WebCommon.ClientErrorHandling
+namespace WebCommon.MicroserviceGateway.ErrorHandling
 {
     public static class CodedErrorExtention
     {

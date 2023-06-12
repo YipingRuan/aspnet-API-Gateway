@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using WebCommon.ClientErrorHandling;
+using WebCommon.MicroserviceGateway.ErrorHandling;
 
 namespace WebCommon.MicroserviceGateway
 {
