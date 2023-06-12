@@ -7,6 +7,9 @@ using Common.ErrorHandling;
 
 namespace WebCommon.ErrorHandling
 {
+    /// <summary>
+    /// Microservice wrap any inside exception
+    /// </summary>
     public class CodedErrorMiddleware
     {
         private readonly RequestDelegate _next;

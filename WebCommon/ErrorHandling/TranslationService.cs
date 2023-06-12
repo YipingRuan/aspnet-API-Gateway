@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
-using System.Text.Json;
 
-namespace Gateway.ClientErrorHandling
+namespace WebCommon.ClientErrorHandling
 {
     public class TranslationService
     {

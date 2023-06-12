@@ -1,11 +1,13 @@
-﻿namespace Gateway.Middlewares
+﻿using Microsoft.AspNetCore.Http;
+
+namespace WebCommon.MicroserviceGateway
 {
     // Convert JWT/API-key to request context in header
-    public class AuthenticationMiddleware
+    public class GatewayAuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public AuthenticationMiddleware(RequestDelegate next)
+        public GatewayAuthenticationMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -25,9 +27,9 @@
             string v = headers["test"].ToString();
             headers.Add("test_added", v + " added");
 
-            if (headers["language"].Count == 0)
+            if (headers[HttpHeaders.PreferedLanguage].Count == 0)
             {
-                headers["language"] = "en-GB";
+                headers[HttpHeaders.PreferedLanguage] = "en-GB";
             }
             else
             {

@@ -1,21 +1,23 @@
 ﻿using Common.ErrorHandling;
-using Gateway.ClientErrorHandling;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using WebCommon.ClientErrorHandling;
 
-namespace Gateway.Middlewares
+namespace WebCommon.MicroserviceGateway
 {
     // https://auth0.com/blog/building-a-reverse-proxy-in-dot-net-core/
     // 1. Forward request to microservices
     // 2. Translate CodedError to CodedErrorClientResponse
-    public class MicroserviceGatewayMiddleware
+    public class GatewayTrafficMiddleware
     {
         private static readonly HttpClient _httpClient = new();
         private readonly RequestDelegate _nextMiddleware;
         private readonly IConfiguration _config;
 
-        public MicroserviceGatewayMiddleware(RequestDelegate nextMiddleware, IConfiguration config)
+        public GatewayTrafficMiddleware(RequestDelegate nextMiddleware, IConfiguration config)
         {
             _nextMiddleware = nextMiddleware;
             _config = config;

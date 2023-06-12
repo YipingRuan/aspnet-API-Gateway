@@ -1,4 +1,4 @@
-using Gateway.Middlewares;
+using WebCommon.MicroserviceGateway;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +14,8 @@ var app = builder.Build();
 
 //app.MapControllers();
 
-app.UseMiddleware<AuthenticationMiddleware>();
-app.UseMiddleware<MicroserviceGatewayMiddleware>();
+app.UseMiddleware<GatewayAuthenticationMiddleware>();
+app.UseMiddleware<GatewayTrafficMiddleware>();
 
 
 app.Run();

@@ -7,7 +7,6 @@ namespace WebCommon.CorrelationId
         public static readonly AsyncLocal<string> Id = new AsyncLocal<string>();
         public static readonly List<Action<string>> OnIdReadyActions = new();
 
-        static readonly string IdHeader = "CorrelationId";
         static string GenerateId() => Guid.NewGuid().ToString("N").Substring(0, 5);
 
         private readonly RequestDelegate _next;
@@ -19,14 +18,14 @@ namespace WebCommon.CorrelationId
 
         public async Task Invoke(HttpContext context)
         {
-            string correlationId = context.Request.Headers[IdHeader].ToString();
+            string correlationId = context.Request.Headers[HttpHeaders.CorrelationId].ToString();
             if (string.IsNullOrEmpty(correlationId))
             {
                 correlationId = GenerateId();
             }
 
             Id.Value = correlationId;
-            context.Response.Headers.Add(IdHeader, correlationId);
+            context.Response.Headers.Add(HttpHeaders.CorrelationId, correlationId);
 
             foreach (var a in OnIdReadyActions)
             {
