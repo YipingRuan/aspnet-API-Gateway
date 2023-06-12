@@ -30,7 +30,7 @@
                 headers["language"] = "en-GB";
             }
             else
-            { 
+            {
                 // Use user's language setting
             }
         }

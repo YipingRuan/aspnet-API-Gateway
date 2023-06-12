@@ -1,1 +1,1 @@
-WebCommon.StartupSetup.CommonWebApplicationStartup.Start(args);
+WebCommon.StartupSetup.SharedStartup.Start(args, "WeatherService");
