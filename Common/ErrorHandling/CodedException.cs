@@ -17,7 +17,18 @@ namespace Common.ErrorHandling
         {
             Code = code;
             InternalDetails = internalDetails;
-            Data.UpdateFrom(Helper.ConverToDictionary(data));
+            
+            // Add extra data
+            if (data != null)
+            {
+                var json = JsonSerializer.SerializeToUtf8Bytes(data);
+                var d = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+
+                foreach (var p in d)
+                {
+                    Data[p.Key] = p.Value;
+                }
+            }
         }
 
         /// <summary>
@@ -74,30 +85,6 @@ namespace Common.ErrorHandling
             };
 
             return details;
-        }
-    }
-
-    internal static class Helper
-    {
-        internal static Dictionary<string, object> ConverToDictionary(object obj)
-        {
-            if (obj == null)
-            {
-                return new Dictionary<string, object>();
-            }
-
-            var json = JsonSerializer.SerializeToUtf8Bytes(obj);
-            var d = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-
-            return d;
-        }
-
-        internal static void UpdateFrom(this IDictionary source, IDictionary extra)
-        {
-            foreach (DictionaryEntry p in extra)
-            {
-                source[p.Key] = p.Value;
-            }
         }
     }
 }
