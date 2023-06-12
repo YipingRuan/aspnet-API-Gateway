@@ -1,1 +1,3 @@
-WebCommon.StartupSetup.SharedStartup.Start(args, "WeatherService");
+using WebCommon.MicroserviceUpstream.StartupSetup;
+
+SharedStartup.Start(args, "WeatherService");

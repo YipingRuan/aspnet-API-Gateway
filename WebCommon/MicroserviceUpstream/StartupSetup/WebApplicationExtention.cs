@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebCommon.CorrelationId;
-using WebCommon.ErrorHandling;
 
-namespace WebCommon.StartupSetup
+namespace WebCommon.MicroserviceUpstream.StartupSetup
 {
     /// <summary>
     /// Use in asp.net core Program.cs. Shared setup for all API projects.

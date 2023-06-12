@@ -11,9 +11,9 @@ namespace WebCommon.Logging
     public static class SerilogSetupExtention
     {
         static string ConsoleTemplate = "[{Timestamp:HH:mm:ss}][{Level:u3}] {Message}{NewLine}{Exception}";
-        //static string FileTemplate = "[{Timestamp:HH:mm:ss}][{Level:u3}][{CorrelationId}][{ServiceName}] {Message}{NewLine}{Exception}";
+        //static string FileTemplate = "[{Timestamp:HH:mm:ss}][{Level:u3}][{CorrelationId}][{Microservice}] {Message}{NewLine}{Exception}";
 
-        public static void SetupSerilog(this WebApplicationBuilder builder, string serviceName)
+        public static void SetupSerilog(this WebApplicationBuilder builder, string microserviceName)
         {
             builder.Host.UseSerilog((context, services, configuration) => configuration
                 // All other information not wanted
@@ -22,7 +22,7 @@ namespace WebCommon.Logging
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
 
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("ServiceName", serviceName)
+                .Enrich.WithProperty("Microservice", microserviceName)
 
                 .WriteTo.Console(outputTemplate: ConsoleTemplate)
                 .WriteTo.Debug()

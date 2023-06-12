@@ -37,7 +37,7 @@ namespace WebCommon.MicroserviceGateway
                 };
 
                 var codedError = ex.Bag("Gateway.ForwardRequest.Error", details).ToCodedError(null);
-                var clientResponse = ProcessCodedError(codedError, context.Request.Headers["language"] + "");
+                var clientResponse = ProcessCodedError(codedError, context.Request.Headers[HttpHeaders.PreferedLanguage] + "");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
@@ -79,7 +79,7 @@ namespace WebCommon.MicroserviceGateway
                     var error = JsonSerializer.Deserialize<CodedError>(content);
                     if (!string.IsNullOrEmpty(error.Code))
                     {
-                        ClientErrorResponse clientResponse = ProcessCodedError(error, context.Request.Headers["language"] + "");
+                        ClientErrorResponse clientResponse = ProcessCodedError(error, context.Request.Headers[HttpHeaders.PreferedLanguage] + "");
                         await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
                         return;
                     }

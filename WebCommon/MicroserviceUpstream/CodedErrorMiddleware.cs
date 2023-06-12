@@ -2,10 +2,9 @@
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
-using WebCommon.CorrelationId;
 using Common.ErrorHandling;
 
-namespace WebCommon.ErrorHandling
+namespace WebCommon.MicroserviceUpstream
 {
     /// <summary>
     /// Microservice wrap any inside exception
@@ -33,7 +32,7 @@ namespace WebCommon.ErrorHandling
 
                 // Write CodedError
                 var serviceResponse = ex
-                    .Bag("General.ServiceError", new { ServiceName = context.Request.Path.Value })
+                    .Bag("General.ServiceError", new { Path = context.Request.Path.Value })
                     .ToCodedError(CorrelationIdMiddleware.Id.Value);
 
                 var utf8 = JsonSerializer.SerializeToUtf8Bytes(serviceResponse);

@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Context;
-using WebCommon.CorrelationId;
 using WebCommon.Logging;
 
-namespace WebCommon.StartupSetup
+namespace WebCommon.MicroserviceUpstream.StartupSetup
 {
     /// <summary>
     /// Use in asp.net core Program.cs. Shared setup for all API projects.
@@ -33,13 +32,13 @@ namespace WebCommon.StartupSetup
             {
                 builder.Configuration.AddJsonFile($"{item}.json", optional: true);
             }
-            
+
             builder.Configuration.AddEnvironmentVariables();
         }
 
-        private static void SetupLogging(WebApplicationBuilder builder, string applicationName)
+        private static void SetupLogging(WebApplicationBuilder builder, string microserviceName)
         {
-            builder.SetupSerilog(applicationName);
+            builder.SetupSerilog(microserviceName);
             CorrelationIdMiddleware.OnIdReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
         }
     }

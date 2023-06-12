@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace WebCommon.CorrelationId
+namespace WebCommon.MicroserviceUpstream
 {
     public class CorrelationIdMiddleware
     {

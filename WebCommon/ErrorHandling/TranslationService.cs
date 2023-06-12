@@ -13,7 +13,7 @@ namespace WebCommon.ClientErrorHandling
             ["en-GB"] = new()
             {
                 ["WeatherService.ForecastFail"] = "Failed to forecast weather file {{FileName}}",
-                ["General.ServiceError"] = "Internal service error: {{ServiceName}}"
+                ["General.ServiceError"] = "Internal service error: {{Path}}"
             }
         };
 
@@ -29,9 +29,16 @@ namespace WebCommon.ClientErrorHandling
 
         public string LanguageCode { get; private set; }
 
-        public TranslationService(string languageCode = "en-GB")
+        public TranslationService(string languageCode)
         {
-            LanguageCode = languageCode;
+            if (string.IsNullOrEmpty(languageCode))
+            {
+                LanguageCode = "en-GB";
+            }
+            else
+            {
+                LanguageCode = languageCode;
+            }
         }
 
         public string Translate(string code, IDictionary data)
