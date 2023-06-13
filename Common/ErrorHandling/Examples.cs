@@ -28,6 +28,7 @@
             }
             catch (Exception ex)
             {
+                // Optionally add log here
                 // Wrap the exception with code and detail
                 throw ex.Bag("ProcessorService.SaveShipment", new { Reference = 123 });
             }

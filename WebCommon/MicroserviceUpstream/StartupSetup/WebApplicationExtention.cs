@@ -13,9 +13,10 @@ namespace WebCommon.MicroserviceUpstream.StartupSetup
         public static void CommonSetup(this WebApplication app)
         {
             app.MapControllers();
+            app.MapHealthChecks("/health");
+
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<CodedErrorMiddleware>();
-            app.MapHealthChecks("/health");
 
             LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>());
         }
