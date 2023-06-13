@@ -1,4 +1,4 @@
-using WebCommon.MicroserviceUpstream.StartupSetup;
+﻿using WebCommon.MicroserviceUpstream.StartupSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.CommonSetup("WeatherService");

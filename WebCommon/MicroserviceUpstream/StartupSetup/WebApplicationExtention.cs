@@ -10,7 +10,7 @@ namespace WebCommon.MicroserviceUpstream.StartupSetup
     /// </summary>
     public static class WebApplicationExtention
     {
-        public static WebApplication CommonSetup(this WebApplication app)
+        public static void CommonSetup(this WebApplication app)
         {
             app.MapControllers();
             app.UseMiddleware<CorrelationIdMiddleware>();
@@ -18,8 +18,6 @@ namespace WebCommon.MicroserviceUpstream.StartupSetup
             app.MapHealthChecks("/health");
 
             LogUtility.SetLoggerFactory(app.Services.GetService<ILoggerFactory>());
-
-            return app;
         }
     }
 }

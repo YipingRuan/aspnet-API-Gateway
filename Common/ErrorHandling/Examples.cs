@@ -9,7 +9,7 @@
             {
                 File.ReadAllLines("File not there");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Read from back file instead
             }

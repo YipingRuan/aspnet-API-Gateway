@@ -11,20 +11,17 @@ namespace WebCommon.MicroserviceUpstream.StartupSetup
     /// </summary>
     public static class WebApplicationBuilderExtention
     {
-        public static WebApplicationBuilder CommonSetup(this WebApplicationBuilder builder, string applicationName)
+        public static void CommonSetup(this WebApplicationBuilder builder, string applicationName)
         {
-            LoadConfig(builder);
-
             // Regular asp.net
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
 
-            SetupLogging(builder, applicationName);
-
-            return builder;
+            builder.LoadConfig();
+            builder.SetupLogging(applicationName);
         }
 
-        private static void LoadConfig(WebApplicationBuilder builder)
+        static void LoadConfig(this WebApplicationBuilder builder)
         {
             builder.Configuration.SetBasePath(AppContext.BaseDirectory);
             string[] files = { "shared-settings", "shared-settings.local", "appsettings.local" };
@@ -36,7 +33,7 @@ namespace WebCommon.MicroserviceUpstream.StartupSetup
             builder.Configuration.AddEnvironmentVariables();
         }
 
-        private static void SetupLogging(WebApplicationBuilder builder, string microserviceName)
+        static void SetupLogging(this WebApplicationBuilder builder, string microserviceName)
         {
             builder.SetupSerilog(microserviceName);
             CorrelationIdMiddleware.OnIdReadyActions.Add(id => LogContext.PushProperty("CorrelationId", id));
