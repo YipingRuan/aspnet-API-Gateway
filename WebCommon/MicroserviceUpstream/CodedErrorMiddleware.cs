@@ -27,13 +27,13 @@ namespace WebCommon.MicroserviceUpstream
             catch (Exception ex)  // If anything wrong during the Controller call
             {
                 var response = context.Response;
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;  // Service error always 500
                 response.ContentType = MediaTypeNames.Application.Json;
 
                 // Write CodedError
                 var serviceResponse = ex
                     .Bag("General.ServiceError", new { Path = context.Request.Path.Value })
                     .ToCodedError(CorrelationIdMiddleware.Id.Value);
+                response.StatusCode = serviceResponse.HttpErrorCode;
 
                 var utf8 = JsonSerializer.SerializeToUtf8Bytes(serviceResponse);
                 await response.Body.WriteAsync(utf8);

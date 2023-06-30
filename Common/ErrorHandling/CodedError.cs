@@ -11,6 +11,7 @@ namespace Common.ErrorHandling
         public string CorrelationId { get; set; }
         public string TimeStamp { get; set; }
         public string Code { get; set; }
+        public int HttpErrorCode { get; set; }
         public IDictionary Data { get; set; }
         public string Message { get; set; }
         public IDictionary InternalDetails { get; set; }
@@ -24,6 +25,7 @@ namespace Common.ErrorHandling
             var ex = new CodedException(Code, Message, Data, InternalDetails)
             {
                 TimeStamp = TimeStamp,
+                HttpErrorCode = HttpErrorCode,
             };
 
             return ex;

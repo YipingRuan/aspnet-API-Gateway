@@ -10,6 +10,7 @@ namespace Common.ErrorHandling
     {
         public string TimeStamp { get; set; } = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
         public string Code { get; set; }
+        public int HttpErrorCode { get; set; } = HttpErrorCodes.InternalError;
         public IDictionary InternalDetails { get; set; }
 
         public CodedException(string code, string message, object data = null, IDictionary internalDetails = null)
@@ -45,12 +46,19 @@ namespace Common.ErrorHandling
                 CorrelationId = correlationId, // Get from HTTP context
                 TimeStamp = TimeStamp,
                 Code = Code,
+                HttpErrorCode = HttpErrorCode,
                 Data = Data,
                 Message = Message,
                 InternalDetails = internalDetails,
             };
 
             return response;
+        }
+
+        public static class HttpErrorCodes
+        {
+            public const int UserError = 400;
+            public const int InternalError = 500;
         }
     }
 

@@ -38,7 +38,7 @@ namespace WebCommon.MicroserviceGateway
 
                 var codedError = ex.Bag("Gateway.ForwardRequest.Error", details).ToCodedError(null);
                 var clientResponse = ProcessCodedError(codedError, context.Request.Headers[HttpHeaders.PreferedLanguage] + "");
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.StatusCode = (int)HttpStatusCode.BadGateway;
 
                 await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
             }
@@ -70,8 +70,8 @@ namespace WebCommon.MicroserviceGateway
 
         private async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage)
         {
-            // Is a CodedError response? (Must be 500)
-            if (responseMessage.StatusCode == HttpStatusCode.InternalServerError)
+            // Is a CodedError response? (Must be 500/400)
+            if (responseMessage.StatusCode == HttpStatusCode.InternalServerError || responseMessage.StatusCode == HttpStatusCode.BadRequest)
             {
                 var content = await responseMessage.Content.ReadAsByteArrayAsync();
                 if (content.Length > 0)
@@ -79,6 +79,7 @@ namespace WebCommon.MicroserviceGateway
                     var error = JsonSerializer.Deserialize<CodedError>(content);
                     if (!string.IsNullOrEmpty(error.Code))
                     {
+                        // Good place to log the error as well
                         ClientErrorResponse clientResponse = ProcessCodedError(error, context.Request.Headers[HttpHeaders.PreferedLanguage] + "");
                         await context.Response.WriteAsJsonAsync(clientResponse, DefaultJsonSerializerOptions);
                         return;
@@ -86,7 +87,7 @@ namespace WebCommon.MicroserviceGateway
                 }
             }
 
-            // 200, 500 but not CodedError, other
+            // Other or not CodedError
             await responseMessage.Content.CopyToAsync(context.Response.Body);
         }
 
