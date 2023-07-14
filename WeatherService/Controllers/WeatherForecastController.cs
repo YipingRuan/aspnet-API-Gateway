@@ -85,7 +85,7 @@ namespace WeatherService.Controllers
                         Message = "Must be length 9"
                     };
 
-                    var ex = new CodedException("WeatherService.PHoneFormatWrong", "", new { DemoValidationError = forFrontend });
+                    var ex = new CodedException("WeatherService.PhoneFormatWrong", "", new { DemoValidationError = forFrontend });
                     ex.HttpErrorCode = CodedException.HttpErrorCodes.UserError;  // Indicate the right http code 
                     throw ex;
                 }
