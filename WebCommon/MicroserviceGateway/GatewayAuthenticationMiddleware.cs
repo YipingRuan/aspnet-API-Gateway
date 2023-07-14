@@ -23,9 +23,18 @@ namespace WebCommon.MicroserviceGateway
         {
             var headers = context.Request.Headers;
 
-            // Get API key and fill user information
-            string v = headers[HttpHeaders.ApiKey].ToString();
-            headers.Add("X-User", v + " Test user");
+            // Clear unwanted values
+            foreach (var h in HttpHeaders.InternalHeaders)
+            {
+                headers.Remove(h);
+            }
+
+            //// Get API key and fill user information
+            //string v = headers[HttpHeaders.ApiKey].ToString();
+
+            // Verify JWT and fill user for upstream service
+            headers.Add(HttpHeaders.User, "TestUser");
+            headers.Add(HttpHeaders.Tenant, "CompanyA");
         }
     }
 }

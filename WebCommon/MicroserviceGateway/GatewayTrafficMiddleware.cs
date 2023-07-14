@@ -185,7 +185,8 @@ namespace WebCommon.MicroserviceGateway
 
         static Regex RequestPathPattern = new(@"/(?<ServiceName>.+?)/(?<RemainingPath>.+)", RegexOptions.Compiled);
 
-        static Dictionary<string, string> ServiceMapping = new()
+        // To set on application start
+        public static Dictionary<string, string> ServiceMapping = new()
         {
             ["WeatherService"] = "http://localhost:5055",
         };
