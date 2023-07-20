@@ -139,6 +139,7 @@ namespace WebCommon.MicroserviceGateway
             foreach (var header in context.Request.Headers)
             {
                 requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
             }
         }
 
